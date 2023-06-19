@@ -1,0 +1,6 @@
+cc_library_shared {
+    name: "libshim_perfhub",
+    srcs: ["libshim_perfhub.cpp"],
+    shared_libs: ["libtinyxml2"],
+    proprietary: true,
+}
