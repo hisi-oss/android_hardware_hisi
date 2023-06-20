@@ -4,3 +4,10 @@ cc_library_shared {
     shared_libs: ["libtinyxml2"],
     proprietary: true,
 }
+
+cc_library_shared {
+    name: "libshim_log",
+    srcs: ["libshim_log.cpp"],
+    shared_libs: ["liblog"],
+    vendor: true,
+}
