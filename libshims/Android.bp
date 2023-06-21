@@ -4,3 +4,13 @@ cc_library_shared {
     shared_libs: ["liblog"],
     vendor: true,
 }
+
+cc_library_shared {
+    name: "libshim_hardware",
+    srcs: ["libshim_hardware.cpp"],
+    shared_libs: [
+        "liblog",
+        "libhardware"
+    ],
+    vendor: true,
+}
