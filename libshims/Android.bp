@@ -18,3 +18,10 @@ cc_library_shared {
     shared_libs: ["liblog", "libhardware"],
     vendor: true,
 }
+
+cc_library_shared {
+    name: "libshim_radio",
+    srcs: ["libshim_radio.cpp"],
+    shared_libs: ["android.hardware.radio@1.0"],
+    vendor: true,
+}
