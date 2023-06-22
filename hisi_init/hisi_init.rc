@@ -1,2 +1,9 @@
 on init
-    exec - root root -- /vendor/bin/hisi_init
+    start vendor.hisi_init
+
+service vendor.hisi_init /vendor/bin/hisi_init
+    class main
+    user root
+    group system
+    oneshot
+    disabled
