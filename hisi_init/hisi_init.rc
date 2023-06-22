@@ -1,0 +1,2 @@
+on init
+    exec - root root -- /vendor/bin/hisi_init
