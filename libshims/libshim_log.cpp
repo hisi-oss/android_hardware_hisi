@@ -43,7 +43,7 @@ extern "C" int __android_logPower_print(int bufID, int priority, char* tag, char
     //   - tag: It formats the tag with the priority by using `snprintf()`.
     //   - fmt: Adds a separator (|) and additional format specifier(s).
     snprintf(new_tag, sizeof(new_tag), "%d", priority);
-    snprintf(message, sizeof(message), "|%s%s%s%s%s", fmt);
+    snprintf(message, sizeof(message), "%s", fmt);
 
     // Continue normally, craft the arguments list.
     va_list args;
