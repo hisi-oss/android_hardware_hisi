@@ -17,11 +17,13 @@ struct AndroidLogEntry {
 
 // This stub is used because the original android_log_shouldPrintLine and the
 // AndroidLogFormat struct it relied on have both been removed from the codebase.
-extern "C" int android_log_shouldPrintLine(void* p_format, const char* tag, int pri) {
+extern "C" int android_log_shouldPrintLine(void* p_format __unused, const char* tag __unused,
+                                           int pri __unused) {
     return 1;  // Return 1 regardless the parameters, we should always print the line.
 }
 
-extern "C" size_t android_log_printLogLine(void* p_format, FILE* fp, AndroidLogEntry* entry) {
+extern "C" size_t android_log_printLogLine(void* p_format __unused, FILE* fp,
+                                           AndroidLogEntry* entry) {
     if (fwrite(entry->message, 1, entry->messageLen, fp) != entry->messageLen) {
         return -1;
     }
