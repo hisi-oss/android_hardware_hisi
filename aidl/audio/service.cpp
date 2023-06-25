@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "audiohalservice"
+#define LOG_TAG "audiohalservice.hisi"
 
 #include <signal.h>
 #include <string>

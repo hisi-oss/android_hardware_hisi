@@ -4,9 +4,9 @@ package {
 }
 
 cc_binary {
-    name: "android.hardware.audio.service",
+    name: "android.hardware.audio.service.hisi",
 
-    init_rc: ["android.hardware.audio.service.rc"],
+    init_rc: ["android.hardware.audio.service.hisi.rc"],
     relative_install_path: "hw",
     vendor: true,
     compile_multilib: "64",
@@ -28,10 +28,4 @@ cc_binary {
         "libutils",
         "libhardware",
     ],
-}
-
-// Legacy service name, use android.hardware.audio.service instead
-phony {
-    name: "android.hardware.audio@2.0-service",
-    required: ["android.hardware.audio.service"],
 }
