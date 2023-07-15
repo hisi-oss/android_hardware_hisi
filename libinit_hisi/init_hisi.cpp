@@ -6,8 +6,10 @@
 
 #include "vendor_init.h"
 
+#include <libinit_connectivity.h>
 #include <libinit_variants.h>
 
 void vendor_load_properties() {
-    load_variants();
+    load_connectivity_properties();
+    load_variants_properties();
 }

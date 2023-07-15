@@ -1,9 +1,0 @@
-on init
-    start vendor.hisi_init
-
-service vendor.hisi_init /vendor/bin/hisi_init
-    class main
-    user root
-    group system
-    oneshot
-    disabled

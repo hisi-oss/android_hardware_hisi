@@ -1,19 +1,20 @@
-//
-// Copyright (C) 2023 The LineageOS Project
-//
-// SPDX-License-Identifier: Apache-2.0
-//
+/*
+ * Copyright (C) 2023 The LineageOS Project
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
-#define LOG_TAG "hisi_init"
+#define LOG_TAG "libinit_connectivity"
+#include <libinit_connectivity.h>
+#include <libinit_utils.h>
+
 #include <android-base/file.h>
 #include <android-base/logging.h>
-#include <android-base/properties.h>
 #include <android-base/strings.h>
 
 #include <unistd.h>
 #include <fstream>
 #include <string>
-#include <vector>
 
 constexpr const char* kChiptypePath = "/proc/connectivity/chiptype";
 constexpr const char* kDeviceTreePath = "/proc/device-tree";
@@ -24,14 +25,6 @@ constexpr const char* kCmdline = "/proc/cmdline";
 constexpr const char* kPhoneProp = "/vendor/phone.prop";
 constexpr const char* kDefaultId = "0X00000000";
 constexpr const char* kPropRilReady = "sys.rilprops_ready";
-
-void set_property(const std::string& prop, const std::string& value) {
-    LOG(INFO) << "Setting property: " << prop << " to " << value;
-
-    if (!android::base::SetProperty(prop, value)) {
-        LOG(ERROR) << "Unable to set: " << prop << " to " << value;
-    }
-}
 
 std::string ReadProductId() {
     std::string prid = kDefaultId;
@@ -51,7 +44,7 @@ std::string ReadProductId() {
     return prid;
 }
 
-int SetPhoneProperties(std::string prid) {
+static int SetPhoneProperties(std::string prid) {
     int ret = -1;
     std::string line;
     std::ifstream file(kPhoneProp);
@@ -65,7 +58,7 @@ int SetPhoneProperties(std::string prid) {
                 std::vector<std::string> parts = android::base::Split(line, "=");
                 if (parts.size() == 2) {
                     LOG(INFO) << "Setting property: " << parts.at(0);
-                    android::base::SetProperty(parts.at(0), parts.at(1));
+                    property_override(parts.at(0), parts.at(1), true);
                 }
             }
         }
@@ -74,21 +67,21 @@ int SetPhoneProperties(std::string prid) {
     return ret;
 }
 
-int LoadPhoneProperties() {
+static int LoadPhoneProperties() {
     int ret = -1;
 
     std::string productId = ReadProductId();
     if (productId != kDefaultId) {
         if ((ret = SetPhoneProperties(productId)) == 0) {
             LOG(INFO) << "Successfully loaded phone properties for " << productId;
-            set_property(kPropRilReady, "1");
+            property_override(kPropRilReady, "1", true);
         }
     }
 
     return ret;
 }
 
-int LoadChipProperties() {
+static int LoadChipProperties() {
     int ret = -1;
     std::string chip_type;
     std::string subchip_path;
@@ -101,7 +94,7 @@ int LoadChipProperties() {
     }
 
     // Set the property, so that the init scripts can be included conditionally.
-    set_property(kPropChipType, chip_type);
+    property_override(kPropChipType, chip_type, true);
 
     // This is the subchip type, and it may be different depending on the hardware
     // revision. In our case, we can have either hi11xx or bcm43xx.
@@ -120,12 +113,12 @@ int LoadChipProperties() {
     }
 
     // Set the property, so that the init scripts can be included conditionally.
-    set_property(kPropSubChipType, chip_type);
+    property_override(kPropSubChipType, chip_type, true);
 
     return 0;
 }
 
-int main() {
+void load_connectivity_properties() {
     if (LoadChipProperties() < 0) LOG(WARNING) << "Unable to load chip properties";
 
     if (LoadPhoneProperties() < 0) LOG(WARNING) << "Unable to load phone properties";
