@@ -1,5 +1,0 @@
-cc_library_shared {
-    name: "libicuuc",
-    srcs: ["libicuuc.cpp"],
-    vendor: true,
-}
