@@ -1,11 +1,4 @@
 cc_library_shared {
-    name: "libshim_perfhub",
-    srcs: ["libshim_perfhub.cpp"],
-    shared_libs: ["libtinyxml2"],
-    proprietary: true,
-}
-
-cc_library_shared {
     name: "libshim_log",
     srcs: ["libshim_log.cpp"],
     shared_libs: ["liblog"],
