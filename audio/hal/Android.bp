@@ -1,0 +1,17 @@
+//
+// Copyright (C) 2023 The LineageOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_library_shared {
+    name: "audio.primary.hisi_wrapper",
+    relative_install_path: "hw",
+    vendor: true,
+    srcs: ["audio_hw.cpp"],
+    shared_libs: [
+        "libhardware",
+        "liblog",
+    ],
+    cflags: ["-Wall", "-Werror", "-Wno-unused-parameter"],
+}
