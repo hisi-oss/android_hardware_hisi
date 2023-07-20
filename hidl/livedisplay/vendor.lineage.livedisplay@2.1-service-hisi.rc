@@ -1,0 +1,8 @@
+on init
+    chown system system /sys/devices/virtual/graphics/fb0/lcd_color_temperature
+    chmod 0660 /sys/devices/virtual/graphics/fb0/lcd_color_temperature
+
+service vendor.livedisplay-hal-2-1-hisi /vendor/bin/hw/vendor.lineage.livedisplay@2.1-service-hisi
+    class late_start
+    user system
+    group system
