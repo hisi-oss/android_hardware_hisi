@@ -17,16 +17,16 @@
 #define LOG_TAG "DisplayColorCalibration"
 
 #include <android-base/file.h>
-#include <android-base/strings.h>
 #include <android-base/logging.h>
+#include <android-base/strings.h>
 
 #include <fstream>
 
 #include "DisplayColorCalibration.h"
 
-using android::base::Trim;
-using android::base::Split;
 using android::base::ReadFileToString;
+using android::base::Split;
+using android::base::Trim;
 using android::base::WriteStringToFile;
 
 namespace vendor {
@@ -57,9 +57,9 @@ Return<void> DisplayColorCalibration::getCalibration(getCalibration_cb _hidl_cb)
     if (ReadFileToString(kColorPath, &tmp)) {
         std::vector<std::string> values = Split(Trim(tmp), ",");
         if (values.size() == 9) {
-            rgb.push_back(std::stoi(values[0])); // R
-            rgb.push_back(std::stoi(values[4])); // G
-            rgb.push_back(std::stoi(values[8])); // B
+            rgb.push_back(std::stoi(values[0]));  // R
+            rgb.push_back(std::stoi(values[4]));  // G
+            rgb.push_back(std::stoi(values[8]));  // B
         }
     } else {
         LOG(ERROR) << "Failed to read color calibration file.";

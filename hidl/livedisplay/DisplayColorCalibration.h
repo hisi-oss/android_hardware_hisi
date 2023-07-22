@@ -28,7 +28,6 @@ using ::android::hardware::hidl_vec;
 using ::android::hardware::Return;
 using ::android::hardware::Void;
 
-
 class DisplayColorCalibration : public IDisplayColorCalibration {
   public:
     bool isSupported();
