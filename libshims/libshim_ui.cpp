@@ -3,8 +3,8 @@
 #include <ui/Rect.h>
 #include <utils/Errors.h>
 
-using android::Rect;
 using android::PixelFormat;
+using android::Rect;
 using android::status_t;
 
 extern "C" {
