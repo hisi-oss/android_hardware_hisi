@@ -1,3 +1,9 @@
+//
+// Copyright (C) 2023 The LineageOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
 package {
     // See: http://go/android-license-faq
     default_applicable_licenses: ["Android-Apache-2.0"],
