@@ -1,0 +1,38 @@
+//
+// Copyright (C) 2023 The LineageOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_library_shared {
+    name: "android.hardware.audio@4.0-impl-2.0",
+    defaults: ["android.hardware.audio-impl_default"],
+    relative_install_path: "hw",
+    vendor: true,
+    srcs: [
+        "DevicesFactory.cpp",
+        "PrimaryDevice.cpp",
+        "Stream.cpp",
+        "StreamIn.cpp",
+        "StreamOut.cpp",
+        "Utils.cpp",
+    ],
+    shared_libs: [
+        "libhardware",
+        "libhidlbase",
+        "libutils",
+        "android.hardware.audio@2.0",
+        "android.hardware.audio@2.0-util",
+        "android.hardware.audio@4.0",
+        "android.hardware.audio@4.0-util",
+        "android.hardware.audio.common@2.0",
+        "android.hardware.audio.common@2.0-util",
+        "android.hardware.audio.common@4.0",
+        "android.hardware.audio.common@4.0-util",
+    ],
+    cflags: [
+        "-DMAJOR_VERSION=4",
+        "-DMINOR_VERSION=0",
+        "-include common/all-versions/VersionMacro.h",
+    ],
+}
