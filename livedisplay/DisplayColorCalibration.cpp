@@ -51,27 +51,28 @@ Return<int32_t> DisplayColorCalibration::getMinValue() {
 }
 
 Return<void> DisplayColorCalibration::getCalibration(getCalibration_cb _hidl_cb) {
-    std::vector<int32_t> rgb;
     std::string tmp;
 
+    std::lock_guard<std::mutex> lock(mCachedColorsMutex);
     if (ReadFileToString(kColorPath, &tmp)) {
         std::vector<std::string> values = Split(Trim(tmp), ",");
         if (values.size() == 9) {
-            rgb.push_back(std::stoi(values[0]));  // R
-            rgb.push_back(std::stoi(values[4]));  // G
-            rgb.push_back(std::stoi(values[8]));  // B
+            mCachedColors[0] = std::stoi(values[0]);  // R
+            mCachedColors[1] = std::stoi(values[4]);  // G
+            mCachedColors[2] = std::stoi(values[8]);  // B
         }
     } else {
         LOG(ERROR) << "Failed to read color calibration file.";
     }
 
-    _hidl_cb(rgb);
+    _hidl_cb(mCachedColors);
     return Void();
 }
 
 Return<bool> DisplayColorCalibration::setCalibration(const hidl_vec<int32_t>& rgb) {
     std::string contents;
 
+    std::lock_guard<std::mutex> lock(mCachedColorsMutex);
     for (size_t i = 0; i < rgb.size(); ++i) {
         contents += std::to_string(rgb[i]);
 
@@ -79,6 +80,10 @@ Return<bool> DisplayColorCalibration::setCalibration(const hidl_vec<int32_t>& rg
             contents += ",0,0,0,";
         }
     }
+
+    mCachedColors[0] = rgb[0];  // R
+    mCachedColors[1] = rgb[1];  // G
+    mCachedColors[2] = rgb[2];  // B
 
     return WriteStringToFile(Trim(contents), kColorPath, true);
 }
