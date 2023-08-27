@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 constexpr const char* kChiptypePath = "/proc/connectivity/chiptype";
 constexpr const char* kDeviceTreePath = "/proc/device-tree";
@@ -25,6 +26,11 @@ constexpr const char* kPropChipType = "ro.connectivity.chiptype";
 constexpr const char* kCmdline = "/proc/cmdline";
 constexpr const char* kDefaultId = "0X00000000";
 constexpr const char* kPropRilReady = "sys.rilprops_ready";
+
+constexpr const char* kDenylistedProperties[] = {
+    "ro.odm.config.modem_number"
+};
+
 constexpr const char* kPhonePropPaths[] = {
     "/vendor/phone.prop",
     "/odm/phone.prop"
@@ -61,8 +67,10 @@ static int SetPhoneProperties(std::string prid, std::string propFile) {
             if (ret == 0) {
                 std::vector<std::string> parts = android::base::Split(line, "=");
                 if (parts.size() == 2) {
-                    LOG(INFO) << "Setting property: " << parts.at(0);
-                    set_property(parts.at(0), parts.at(1));
+                    if (std::find(std::begin(kDenylistedProperties),
+                         std::end(kDenylistedProperties), parts.at(0)) == std::end(kDenylistedProperties)) {
+                           set_property(parts.at(0), parts.at(1));
+                    }
                 }
             }
         }
