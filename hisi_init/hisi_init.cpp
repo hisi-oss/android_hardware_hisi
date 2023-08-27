@@ -5,128 +5,14 @@
 //
 
 #define LOG_TAG "hisi_init"
-#include <android-base/file.h>
+
+#include "include/hisi_connectivity.h"
+
 #include <android-base/logging.h>
-#include <android-base/properties.h>
-#include <android-base/strings.h>
 
-#include <unistd.h>
-#include <fstream>
-#include <string>
-#include <vector>
-
-constexpr const char* kChiptypePath = "/proc/connectivity/chiptype";
-constexpr const char* kDeviceTreePath = "/proc/device-tree";
-constexpr const char* kPropSubChipType = "ro.connectivity.sub_chiptype";
-constexpr const char* kPropChipType = "ro.connectivity.chiptype";
-
-constexpr const char* kCmdline = "/proc/cmdline";
-constexpr const char* kPhoneProp = "/vendor/phone.prop";
-constexpr const char* kDefaultId = "0X00000000";
-constexpr const char* kPropRilReady = "sys.rilprops_ready";
-
-void set_property(const std::string& prop, const std::string& value) {
-    LOG(INFO) << "Setting property: " << prop << " to " << value;
-
-    if (!android::base::SetProperty(prop, value)) {
-        LOG(ERROR) << "Unable to set: " << prop << " to " << value;
-    }
-}
-
-std::string ReadProductId() {
-    std::string prid = kDefaultId;
-    std::string cmdline;
-
-    if (android::base::ReadFileToString(kCmdline, &cmdline)) {
-        for (const auto& i : android::base::Split(android::base::Trim(cmdline), " ")) {
-            std::vector<std::string> parts = android::base::Split(i, "=");
-            if (parts.size() == 2 && parts.at(0) == "productid") {
-                prid = parts.at(1);
-                std::transform(prid.begin(), prid.end(), prid.begin(),
-                               [](unsigned char c) { return toupper(c); });
-            }
-        }
-    }
-
-    return prid;
-}
-
-int SetPhoneProperties(std::string prid) {
-    int ret = -1;
-    std::string line;
-    std::ifstream file(kPhoneProp);
-
-    if (file.is_open()) {
-        while (std::getline(file, line)) {
-            if (ret == 0 && line.length() == 0) break;
-            if (line.find(prid) != std::string::npos) ret = 0;
-
-            if (ret == 0) {
-                std::vector<std::string> parts = android::base::Split(line, "=");
-                if (parts.size() == 2) {
-                    LOG(INFO) << "Setting property: " << parts.at(0);
-                    android::base::SetProperty(parts.at(0), parts.at(1));
-                }
-            }
-        }
-    }
-
-    return ret;
-}
-
-int LoadPhoneProperties() {
-    int ret = -1;
-
-    std::string productId = ReadProductId();
-    if (productId != kDefaultId) {
-        if ((ret = SetPhoneProperties(productId)) == 0) {
-            LOG(INFO) << "Successfully loaded phone properties for " << productId;
-            set_property(kPropRilReady, "1");
-        }
-    }
-
-    return ret;
-}
-
-int LoadChipProperties() {
-    int ret = -1;
-    std::string chip_type;
-    std::string subchip_path;
-
-    // This is the main chip type, and it can be used to determine the hardware
-    // revision. In our case, we can have either hisi or bcm.
-    if (!android::base::ReadFileToString(kChiptypePath, &chip_type)) {
-        LOG(ERROR) << "Unable to read: " << kChiptypePath;
-        return ret;
-    }
-
-    // Set the property, so that the init scripts can be included conditionally.
-    set_property(kPropChipType, chip_type);
-
-    // This is the subchip type, and it may be different depending on the hardware
-    // revision. In our case, we can have either hi11xx or bcm43xx.
-    if (chip_type.find("hisi") == 0) {
-        subchip_path = std::string(kDeviceTreePath) + "/hi110x/hi110x,subchip_type";
-        if (access(subchip_path.c_str(), F_OK) != 0) {
-            subchip_path = std::string(kDeviceTreePath) + "/hi1102/name";
-        }
-    } else {
-        subchip_path = std::string(kDeviceTreePath) + "/bcm_wifi/ic_type";
-    }
-
-    if (!android::base::ReadFileToString(subchip_path, &chip_type)) {
-        LOG(ERROR) << "Unable to determine a valid subchip type";
-        return ret;
-    }
-
-    // Set the property, so that the init scripts can be included conditionally.
-    set_property(kPropSubChipType, chip_type);
-
-    return 0;
-}
+#include <iostream>
 
 int main() {
-    if (LoadChipProperties() < 0) LOG(WARNING) << "Unable to load chip properties";
-
-    if (LoadPhoneProperties() < 0) LOG(WARNING) << "Unable to load phone properties";
+    LOG(INFO) << "Running hisi_connectivity";
+    load_hisi_connectivity();
 }
