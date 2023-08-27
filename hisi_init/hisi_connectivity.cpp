@@ -23,9 +23,12 @@ constexpr const char* kPropSubChipType = "ro.connectivity.sub_chiptype";
 constexpr const char* kPropChipType = "ro.connectivity.chiptype";
 
 constexpr const char* kCmdline = "/proc/cmdline";
-constexpr const char* kPhoneProp = "/vendor/phone.prop";
 constexpr const char* kDefaultId = "0X00000000";
 constexpr const char* kPropRilReady = "sys.rilprops_ready";
+constexpr const char* kPhonePropPaths[] = {
+    "/vendor/phone.prop",
+    "/odm/phone.prop"
+};
 
 std::string ReadProductId() {
     std::string prid = kDefaultId;
@@ -45,10 +48,10 @@ std::string ReadProductId() {
     return prid;
 }
 
-static int SetPhoneProperties(std::string prid) {
+static int SetPhoneProperties(std::string prid, std::string propFile) {
     int ret = -1;
     std::string line;
-    std::ifstream file(kPhoneProp);
+    std::ifstream file(propFile);
 
     if (file.is_open()) {
         while (std::getline(file, line)) {
@@ -73,9 +76,11 @@ static int LoadPhoneProperties() {
 
     std::string productId = ReadProductId();
     if (productId != kDefaultId) {
-        if ((ret = SetPhoneProperties(productId)) == 0) {
-            LOG(INFO) << "Successfully loaded phone properties for " << productId;
-            set_property(kPropRilReady, "1");
+        for (const auto& path : kPhonePropPaths) {
+            if ((ret = SetPhoneProperties(productId, path)) == 0) {
+                LOG(INFO) << "Successfully loaded phone properties ( " << path << ") for " << productId;
+                set_property(kPropRilReady, "1");
+            }
         }
     }
 
