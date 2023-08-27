@@ -8,7 +8,6 @@ cc_library_static {
     name: "libinit_hisi",
     srcs: [
         "libinit_utils.cpp",
-        "libinit_connectivity.cpp",
         "libinit_variants.cpp",
     ],
     whole_static_libs: ["libbase"],

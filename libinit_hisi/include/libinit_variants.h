@@ -6,4 +6,4 @@
 
 #pragma once
 
-void load_variants_properties();
+void load_variants();

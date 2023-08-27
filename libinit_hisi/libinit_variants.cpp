@@ -91,7 +91,7 @@ ProductInfo ReadProductInfo() {
     return product_info;
 }
 
-void load_variants_properties() {
+void load_variants() {
     ProductInfo product_info = ReadProductInfo();
 
     // Load the phone model dynamically from the oeminfo partition.
