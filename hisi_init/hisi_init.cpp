@@ -7,6 +7,7 @@
 #define LOG_TAG "hisi_init"
 
 #include "include/hisi_connectivity.h"
+#include "include/hisi_variants.h"
 
 #include <android-base/logging.h>
 
@@ -15,4 +16,6 @@
 int main() {
     LOG(INFO) << "Running hisi_connectivity";
     load_hisi_connectivity();
+    LOG(INFO) << "Running hisi_variants";
+    load_hisi_variants();
 }
