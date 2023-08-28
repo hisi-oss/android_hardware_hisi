@@ -21,3 +21,7 @@ void set_property(const std::string& prop, const std::string& value) {
         LOG(ERROR) << "Unable to set: " << prop << " to " << value;
     }
 }
+
+std::string get_property(const std::string& prop) {
+    return android::base::GetProperty(prop, "");
+}

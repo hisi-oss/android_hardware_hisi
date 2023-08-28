@@ -9,3 +9,4 @@
 #include <string>
 
 void set_property(const std::string& prop, const std::string& value);
+std::string get_property(const std::string& prop);

@@ -84,6 +84,11 @@ ProductInfo ReadProductInfo() {
 void load_hisi_variants() {
     ProductInfo product_info = ReadProductInfo();
 
+    if (!get_property(kPropSku).empty()) {
+        LOG(WARNING) << "Sku property is already set";
+        return;
+    }
+
     // Load the phone model dynamically from the oeminfo partition.
     if (!product_info.model.empty()) {
         LOG(INFO) << "Found product info: " << product_info.model;
