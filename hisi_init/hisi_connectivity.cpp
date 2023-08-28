@@ -14,9 +14,9 @@
 #include <android-base/strings.h>
 
 #include <unistd.h>
+#include <algorithm>
 #include <fstream>
 #include <string>
-#include <algorithm>
 
 constexpr const char* kChiptypePath = "/proc/connectivity/chiptype";
 constexpr const char* kDeviceTreePath = "/proc/device-tree";
@@ -27,6 +27,7 @@ constexpr const char* kCmdline = "/proc/cmdline";
 constexpr const char* kDefaultId = "0X00000000";
 constexpr const char* kPropRilReady = "sys.rilprops_ready";
 
+// clang-format off
 constexpr const char* kDenylistedProperties[] = {
     "ro.odm.config.modem_number"
 };
@@ -35,6 +36,7 @@ constexpr const char* kPhonePropPaths[] = {
     "/vendor/phone.prop",
     "/odm/phone.prop"
 };
+// clang-format on
 
 std::string ReadProductId() {
     std::string prid = kDefaultId;
@@ -68,8 +70,9 @@ static int SetPhoneProperties(std::string prid, std::string propFile) {
                 std::vector<std::string> parts = android::base::Split(line, "=");
                 if (parts.size() == 2) {
                     if (std::find(std::begin(kDenylistedProperties),
-                         std::end(kDenylistedProperties), parts.at(0)) == std::end(kDenylistedProperties)) {
-                           set_property(parts.at(0), parts.at(1));
+                                  std::end(kDenylistedProperties),
+                                  parts.at(0)) == std::end(kDenylistedProperties)) {
+                        set_property(parts.at(0), parts.at(1));
                     }
                 }
             }
@@ -86,7 +89,8 @@ static int LoadPhoneProperties() {
     if (productId != kDefaultId) {
         for (const auto& path : kPhonePropPaths) {
             if ((ret = SetPhoneProperties(productId, path)) == 0) {
-                LOG(INFO) << "Successfully loaded phone properties ( " << path << ") for " << productId;
+                LOG(INFO) << "Successfully loaded phone properties ( " << path << ") for "
+                          << productId;
                 set_property(kPropRilReady, "1");
             }
         }
