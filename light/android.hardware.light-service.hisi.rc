@@ -34,7 +34,7 @@ on early-boot
     chown system system /sys/class/leds/button-backlight/brightness
     chown system system /sys/class/leds/button-backlight1/brightness
 
-service vendor.light-default /vendor/bin/hw/android.hardware.light-service.xiaomi
+service vendor.light-default /vendor/bin/hw/android.hardware.light-service.hisi
     class hal
     user system
     group system
