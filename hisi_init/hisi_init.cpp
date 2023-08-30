@@ -10,8 +10,6 @@
 
 #include <android-base/logging.h>
 
-#include <iostream>
-
 int main() {
     LOG(INFO) << "Running hisi_connectivity";
     load_hisi_connectivity();
