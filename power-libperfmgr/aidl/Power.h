@@ -22,7 +22,7 @@
 #include <memory>
 #include <thread>
 
-#include "disp-power/InteractionHandler.h"
+#include "InteractionHandler.h"
 
 namespace aidl {
 namespace google {
