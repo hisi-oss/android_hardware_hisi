@@ -14,35 +14,6 @@ cc_library {
     ],
 }
 
-cc_library {
-    name: "libadaptivecpu",
-    proprietary: true,
-    vendor: true,
-    srcs: [
-        "adaptivecpu/AdaptiveCpu.cpp",
-        "adaptivecpu/AdaptiveCpuConfig.cpp",
-        "adaptivecpu/AdaptiveCpuStats.cpp",
-        "adaptivecpu/CpuFrequencyReader.cpp",
-        "adaptivecpu/CpuLoadReaderProcStat.cpp",
-        "adaptivecpu/CpuLoadReaderSysDevices.cpp",
-        "adaptivecpu/Device.cpp",
-        "adaptivecpu/KernelCpuFeatureReader.cpp",
-        "adaptivecpu/Model.cpp",
-        "adaptivecpu/RealFilesystem.cpp",
-        "adaptivecpu/ThrottleDecision.cpp",
-        "adaptivecpu/TimeSource.cpp",
-        "adaptivecpu/WorkDurationProcessor.cpp",
-    ],
-    shared_libs: [
-        "android.hardware.power-V3-ndk",
-        "libbase",
-        "liblog",
-        "libperfmgr",
-        "libutils",
-        "libcutils",
-    ],
-}
-
 cc_binary {
     name: "android.hardware.power-service.hisi-libperfmgr",
     relative_install_path: "hw",
@@ -51,7 +22,6 @@ cc_binary {
     vendor: true,
     shared_libs: [
         "android.hardware.power-V3-ndk",
-        "libadaptivecpu",
         "libbase",
         "libcutils",
         "liblog",

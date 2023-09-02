@@ -46,9 +46,8 @@ constexpr char kPowerHalStateProp[] = "vendor.powerhal.state";
 constexpr char kPowerHalAudioProp[] = "vendor.powerhal.audio";
 constexpr char kPowerHalRenderingProp[] = "vendor.powerhal.rendering";
 
-Power::Power(std::shared_ptr<DisplayLowPower> dlpw, std::shared_ptr<AdaptiveCpu> adaptiveCpu)
+Power::Power(std::shared_ptr<DisplayLowPower> dlpw)
     : mDisplayLowPower(dlpw),
-      mAdaptiveCpu(adaptiveCpu),
       mInteractionHandler(nullptr),
       mSustainedPerfModeOn(false) {
     mInteractionHandler = std::make_unique<InteractionHandler>();
@@ -198,7 +197,6 @@ binder_status_t Power::dump(int fd, const char **, uint32_t) {
     // Dump nodes through libperfmgr
     HintManager::GetInstance()->DumpToFd(fd);
     PowerSessionManager::getInstance()->dumpToFd(fd);
-    mAdaptiveCpu->DumpToFd(fd);
     if (!::android::base::WriteStringToFd(buf, fd)) {
         PLOG(ERROR) << "Failed to dump state to fd";
     }
@@ -221,7 +219,7 @@ ndk::ScopedAStatus Power::createHintSession(int32_t tgid, int32_t uid,
         return ndk::ScopedAStatus::fromExceptionCode(EX_ILLEGAL_ARGUMENT);
     }
     std::shared_ptr<IPowerHintSession> session = ndk::SharedRefBase::make<PowerHintSession>(
-            mAdaptiveCpu, tgid, uid, threadIds, durationNanos);
+            tgid, uid, threadIds, durationNanos);
     *_aidl_return = session;
     return ndk::ScopedAStatus::ok();
 }
