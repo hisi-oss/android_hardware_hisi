@@ -1,3 +1,10 @@
+soong_namespace {
+    imports: [
+        "hardware/google/pixel",
+        "hardware/google/interfaces",
+    ],
+}
+
 cc_binary {
     name: "android.hardware.power-service.hisi-libperfmgr",
     relative_install_path: "hw",
