@@ -1,0 +1,72 @@
+cc_library {
+    name: "libdisppower-pixel",
+    proprietary: true,
+    srcs: [
+        "disp-power/DisplayLowPower.cpp",
+        "disp-power/InteractionHandler.cpp",
+    ],
+    shared_libs: [
+        "libbase",
+        "libcutils",
+        "liblog",
+        "libperfmgr",
+        "libutils",
+    ],
+}
+
+cc_library {
+    name: "libadaptivecpu",
+    proprietary: true,
+    vendor: true,
+    srcs: [
+        "adaptivecpu/AdaptiveCpu.cpp",
+        "adaptivecpu/AdaptiveCpuConfig.cpp",
+        "adaptivecpu/AdaptiveCpuStats.cpp",
+        "adaptivecpu/CpuFrequencyReader.cpp",
+        "adaptivecpu/CpuLoadReaderProcStat.cpp",
+        "adaptivecpu/CpuLoadReaderSysDevices.cpp",
+        "adaptivecpu/Device.cpp",
+        "adaptivecpu/KernelCpuFeatureReader.cpp",
+        "adaptivecpu/Model.cpp",
+        "adaptivecpu/RealFilesystem.cpp",
+        "adaptivecpu/ThrottleDecision.cpp",
+        "adaptivecpu/TimeSource.cpp",
+        "adaptivecpu/WorkDurationProcessor.cpp",
+    ],
+    shared_libs: [
+        "android.hardware.power-V3-ndk",
+        "libbase",
+        "liblog",
+        "libperfmgr",
+        "libutils",
+        "libcutils",
+    ],
+}
+
+cc_binary {
+    name: "android.hardware.power-service.pixel-libperfmgr",
+    relative_install_path: "hw",
+    init_rc: ["aidl/android.hardware.power-service.pixel-libperfmgr.rc"],
+    vintf_fragments: ["aidl/android.hardware.power-service.pixel.xml"],
+    vendor: true,
+    shared_libs: [
+        "android.hardware.power-V3-ndk",
+        "libadaptivecpu",
+        "libbase",
+        "libcutils",
+        "liblog",
+        "libutils",
+        "libbinder_ndk",
+        "libdisppower-pixel",
+        "libperfmgr",
+        "libprocessgroup",
+        "pixel-power-ext-V1-ndk",
+    ],
+    srcs: [
+        "aidl/service.cpp",
+        "aidl/Power.cpp",
+        "aidl/PowerExt.cpp",
+        "aidl/PowerHintSession.cpp",
+        "aidl/PowerSessionManager.cpp",
+    ],
+}
