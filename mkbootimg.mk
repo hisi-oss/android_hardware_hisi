@@ -6,6 +6,8 @@
 
 LOCAL_PATH := $(call my-dir)
 
+BOARD_CUSTOM_BOOTIMG_HAS_RAMDISK ?= true
+
 #
 # Global Flags
 #
