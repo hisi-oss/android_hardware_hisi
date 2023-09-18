@@ -44,3 +44,13 @@ cc_library_shared {
         "libtinyxml2_shim"
     ],
 }
+
+cc_library_shared {
+    name: "libshim_utils",
+    srcs: ["libshim_utils.cpp"],
+    vendor: true,
+    compile_multilib: "64",
+    shared_libs: [
+        "libutils",
+    ],
+}
