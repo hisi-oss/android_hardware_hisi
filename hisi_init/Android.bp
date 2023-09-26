@@ -12,6 +12,7 @@ cc_binary {
         "hisi_connectivity.cpp",
         "hisi_dalvik.cpp",
         "hisi_init.cpp",
+        "hisi_nve.cpp"
     ],
     shared_libs: ["libbase"],
     vendor: true,
