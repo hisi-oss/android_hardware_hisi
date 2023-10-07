@@ -33,7 +33,7 @@ std::string parse_mac(std::string mac) {
 std::string load_nve_path() {
     // Loop over all the possible paths and use
     // the first one that exists and can be read.
-    for (const auto &path: kNvePaths) {
+    for (const auto& path : kNvePaths) {
         // Make sure the path is accessible for us.
         if (access(path.c_str(), R_OK) == 0) return path;
     }
