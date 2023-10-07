@@ -28,14 +28,14 @@ typedef struct nv_item {
 #pragma pack(pop)
 
 const std::pair<std::string, std::string> kNveMacMap[] = {
-    {"MACWLAN", "/data/vendor/wifi/macwifi"},
-    {"MACBT", "/data/vendor/bluedroid/macbt"},
+        {"MACWLAN", "/data/vendor/wifi/macwifi"},
+        {"MACBT", "/data/vendor/bluedroid/macbt"},
 };
 
 const std::vector<std::string> kNvePaths = {
-    "/dev/block/by-name/nvme",
-    "/dev/block/platform/hi_mci.0/by-name/nvme",
-    "/dev/block/mmcblk0p7",
+        "/dev/block/by-name/nvme",
+        "/dev/block/platform/hi_mci.0/by-name/nvme",
+        "/dev/block/mmcblk0p7",
 };
 
 void load_hisi_nve();
