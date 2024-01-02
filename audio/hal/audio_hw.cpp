@@ -160,6 +160,46 @@ static int adev_close(hw_device_t* device) {
     return 0;
 }
 
+static int adev_get_microphones(const struct audio_hw_device* dev,
+                                struct audio_microphone_characteristic_t* mic_array,
+                                size_t* mic_count) {
+    if ((mic_array == NULL) || (mic_count == NULL)) {
+        return -EINVAL;
+    }
+
+    if (*mic_count == 0) {
+        *mic_count = 1;
+        return 0;
+    }
+
+    return -ENOSYS;
+}
+
+static int adev_get_audio_port(struct audio_hw_device* dev, struct audio_port* port) {
+    hisi_wrapper_audio_device* ctx = reinterpret_cast<hisi_wrapper_audio_device*>(dev);
+
+    if (!ctx) {
+        return 0;
+    }
+
+    if (port->type != AUDIO_PORT_TYPE_DEVICE) {
+        return -EINVAL;
+    }
+
+    return ctx->hisi_device->get_audio_port(ctx->hisi_device, port);
+}
+
+static int adev_set_audio_port_config(struct audio_hw_device* dev,
+                                      const struct audio_port_config* config) {
+    hisi_wrapper_audio_device* ctx = reinterpret_cast<hisi_wrapper_audio_device*>(dev);
+
+    if (!ctx) {
+        return 0;
+    }
+
+    return ctx->hisi_device->set_audio_port_config(ctx->hisi_device, config);
+}
+
 static struct audio_patch_record* get_patch_from_list(struct audio_device* dev,
                                                       audio_patch_handle_t patch_id) {
     struct audio_patch_record* patch;
@@ -357,8 +397,11 @@ static int adev_open(const hw_module_t* module, const char* name, hw_device_t** 
     adev->device.open_input_stream = adev_open_input_stream;
     adev->device.close_input_stream = adev_close_input_stream;
     adev->device.dump = adev_dump;
+    adev->device.get_microphones = adev_get_microphones;
     adev->device.create_audio_patch = adev_create_audio_patch;
     adev->device.release_audio_patch = adev_release_audio_patch;
+    adev->device.get_audio_port = adev_get_audio_port;
+    adev->device.set_audio_port_config = adev_set_audio_port_config;
 
     *device = &adev->device.common;
 
