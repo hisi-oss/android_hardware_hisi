@@ -209,3 +209,24 @@ struct hisi_audio_hw_device {
                                          struct audio_port_v7* port, bool connected);
 };
 typedef struct hisi_audio_hw_device hisi_audio_hw_device_t;
+
+/**
+ * These are the supported use cases by the hardware.
+ * Each usecase is mapped to a specific PCM device.
+ * Refer to pcm_device_table[].
+ */
+// clang-format off
+enum {
+    USECASE_INVALID = -1,
+    AUDIO_USECASE_MAX
+};
+// clang-format on
+typedef int audio_usecase_t;
+
+struct audio_patch_record {
+    struct listnode list;
+    audio_patch_handle_t handle;       // Handle of the patch
+    audio_patch_handle_t handle_hisi;  // Handle returned by the original HAL
+    audio_usecase_t usecase;
+    struct audio_patch patch;
+};
