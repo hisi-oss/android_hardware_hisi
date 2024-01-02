@@ -92,6 +92,7 @@ static int LoadPhoneProperties() {
                 LOG(INFO) << "Successfully loaded phone properties ( " << path << ") for "
                           << productId;
                 set_property(kPropRilReady, "1");
+                return ret;
             }
         }
     }
