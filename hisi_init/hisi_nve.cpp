@@ -23,11 +23,17 @@ static void set(const std::string& path, const T& value) {
     file << value << std::endl;
 }
 
-std::string parse_mac(std::string mac) {
-    for (auto it = mac.begin() + 2; it != mac.end(); it += 3) {
-        it = mac.insert(it, ':');
-    }
-    return mac;
+std::string parse_mac(const std::string& mac) {
+    std::string result;
+
+    result += mac.substr(0, 2) + ':';
+    result += mac.substr(2, 2) + ':';
+    result += mac.substr(4, 2) + ':';
+    result += mac.substr(6, 2) + ':';
+    result += mac.substr(8, 2) + ':';
+    result += mac.substr(10, 2);
+
+    return result;
 }
 
 std::string load_nve_path() {
@@ -99,7 +105,7 @@ std::string nve_read(const std::string& name, const std::string& path) {
         if (std::memcmp(entry.nv_name, name.c_str(), name.length()) == 0) {
             // If the entry name starts with "MAC", we need to add
             // a colon between each byte of the MAC address.
-            return std::string(entry.nv_data, entry.nv_data);
+            return std::string(entry.nv_data, entry.valid_size);
         }
     }
 
