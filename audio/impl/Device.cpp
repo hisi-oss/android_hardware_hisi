@@ -373,6 +373,12 @@ std::tuple<Result, AudioPatchHandle> Device::createOrUpdateAudioPatch(
             status != NO_ERROR) {
             return {analyzeStatus("audioPortConfigsToHal;sources", status), patch};
         }
+        struct audio_port_config* sources_hal = &halSources[0];
+        for (int i = 0; i < num_sources; i++) {
+            if (sources_hal[i].type == AUDIO_PORT_TYPE_MIX) {
+                sources_hal[i].ext.mix.hw_module = sources_hal[i].ext.mix.handle;
+            }
+        }
         std::unique_ptr<audio_port_config[]> halSinks;
         if (status_t status = HidlUtils::audioPortConfigsToHal(sinks, &halSinks);
             status != NO_ERROR) {
