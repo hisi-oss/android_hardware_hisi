@@ -213,6 +213,11 @@ static struct audio_patch_record* get_patch_from_list(struct audio_device* dev,
     return NULL;
 }
 
+const char* strAudioPatchRole[] = {"AUDIO_PORT_ROLE_NONE", "AUDIO_PORT_ROLE_SOURCE",
+                                   "AUDIO_PORT_ROLE_SINK"};
+const char* strAudioPatchType[] = {"AUDIO_PORT_TYPE_NONE", "AUDIO_PORT_TYPE_DEVICE",
+                                   "AUDIO_PORT_TYPE_MIX", "AUDIO_PORT_TYPE_SESSION"};
+
 static int adev_create_audio_patch(struct audio_hw_device* dev, unsigned int num_sources,
                                    const struct audio_port_config* sources, unsigned int num_sinks,
                                    const struct audio_port_config* sinks,
@@ -268,22 +273,44 @@ static int adev_create_audio_patch(struct audio_hw_device* dev, unsigned int num
         for (int i = 0; i < num_sources; i++) patch_record->patch.sources[i] = sources[i];
         for (int i = 0; i < num_sinks; i++) patch_record->patch.sinks[i] = sinks[i];
 
-        for (int hw_module = ctx->hw_module; hw_module < 0x10; hw_module++) {
-            for (int i = 0; i < num_sources; i++)
-                patch_record->patch.sources[i].ext.mix.hw_module = hw_module;
-
-            status = ctx->hisi_device->create_audio_patch(
-                    ctx->hisi_device, patch_record->patch.num_sources, patch_record->patch.sources,
-                    patch_record->patch.num_sinks, patch_record->patch.sinks, &handle_hisi);
-
-            if (status == 0) {
-                patch_record->handle_hisi = handle_hisi;
-                ctx->hw_module = hw_module;
-                break;
-            } else {
-                patch_record->handle_hisi = AUDIO_PATCH_HANDLE_NONE;
-                ALOGE("%s() create_audio_patch error %i", __func__, status);
+        for (int i = 0; i < num_sources; i++) {
+            if (patch_record->patch.sources[i].type == AUDIO_PORT_TYPE_MIX) {
+                patch_record->patch.sources[i].ext.mix.hw_module =
+                        patch_record->patch.sources[i].ext.mix.handle;
+                ALOGD("%s - change source hw_module with handle(%d) ", __FUNCTION__,
+                      patch_record->patch.sources[i].ext.mix.hw_module);
             }
+            if (patch_record->patch.sources[i].type == AUDIO_PORT_TYPE_DEVICE) {
+                patch_record->patch.sources[i].ext.device.hw_module =
+                        patch_record->patch.sources[i].ext.device.type;
+            }
+        }
+
+        for (int i = 0; i < num_sinks; i++) {
+            if (patch_record->patch.sinks[i].type == AUDIO_PORT_TYPE_MIX) {
+                patch_record->patch.sinks[i].ext.mix.hw_module =
+                        patch_record->patch.sinks[i].ext.mix.handle;
+                ALOGD("%s - change sink hw_module with handle(%d) ", __FUNCTION__,
+                      patch_record->patch.sinks[i].ext.mix.hw_module);
+            }
+
+            if (patch_record->patch.sinks[i].type == AUDIO_PORT_TYPE_DEVICE) {
+                patch_record->patch.sinks[i].ext.device.hw_module =
+                        patch_record->patch.sinks[i].ext.device.type;
+            }
+        }
+
+        status = ctx->hisi_device->create_audio_patch(
+                ctx->hisi_device, patch_record->patch.num_sources, patch_record->patch.sources,
+                patch_record->patch.num_sinks, patch_record->patch.sinks, &handle_hisi);
+
+        if (status == 0) {
+            ALOGD("%s - call create_audio_patch sucess", __FUNCTION__);
+            patch_record->handle_hisi = handle_hisi;
+            ctx->hw_module = 0;
+        } else {
+            patch_record->handle_hisi = AUDIO_PATCH_HANDLE_NONE;
+            ALOGD("%s - call create_audio_patch error %i", __FUNCTION__, status);
         }
 
         list_add_tail(&ctx->audio_patch_record_list, &patch_record->list);
