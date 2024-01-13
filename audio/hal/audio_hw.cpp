@@ -322,7 +322,8 @@ static int adev_release_audio_patch(struct audio_hw_device* dev, audio_patch_han
     pthread_mutex_unlock(&ctx->lock);
 
     if (!patch_record) {
-        ALOGE("%s() failed to find the patch record with handle (%d) in the list", __func__, handle);
+        ALOGE("%s() failed to find the patch record with handle (%d) in the list", __func__,
+              handle);
         status = -EINVAL;
         return status;
     } else {
@@ -353,7 +354,7 @@ static int adev_open(const hw_module_t* module, const char* name, hw_device_t** 
         return -ENOMEM;
     }
 
-    pthread_mutex_init(&adev->lock, (const pthread_mutexattr_t *) NULL);
+    pthread_mutex_init(&adev->lock, (const pthread_mutexattr_t*)NULL);
     list_init(&adev->audio_patch_record_list);
     adev->next_patch_handle = AUDIO_PATCH_HANDLE_NONE;
     adev->hw_module = 1;
