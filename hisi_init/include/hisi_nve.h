@@ -28,7 +28,7 @@ typedef struct nv_item {
 #pragma pack(pop)
 
 const std::pair<std::string, std::string> kNveMacMap[] = {
-        {"MACWLAN", "/data/vendor/wifi/macwifi"},
+        {"MACWLAN", "/data/vendor/wifi/macwlan"},
         {"MACBT", "/data/vendor/bluedroid/macbt"},
 };
 
