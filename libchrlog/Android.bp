@@ -1,0 +1,11 @@
+cc_library_shared {
+    name: "libchrlog",
+    proprietary: true,
+    defaults: ["hidl_defaults"],
+    srcs: [
+        "chrlog.c",
+    ],
+    shared_libs: [
+        "liblog",
+    ],
+}
