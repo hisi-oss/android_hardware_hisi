@@ -1,11 +1,31 @@
 //
-// Copyright (C) 2023 The LineageOS Project
+// Copyright (C) 2024 The LineageOS Project
 //
 // SPDX-License-Identifier: Apache-2.0
 //
 
+soong_config_module_type {
+    name: "emui_version_number",
+    module_type: "cc_defaults",
+    config_namespace: "huaweiAudioVars",
+    value_variables: ["emui_version"],
+    properties: [
+        "cppflags",
+    ],
+}
+
+emui_version_number {
+    name: "emui_version_number_defaults",
+    soong_config_variables: {
+        emui_version: {
+            cppflags: ["-DEMUI_VERSION=%s"],
+        },
+    },
+}
+
 cc_library_shared {
     name: "audio.primary.hisi_wrapper",
+    defaults: ["emui_version_number_defaults"],
     relative_install_path: "hw",
     vendor: true,
     srcs: ["audio_hw.cpp"],

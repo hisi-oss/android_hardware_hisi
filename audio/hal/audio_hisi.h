@@ -128,6 +128,26 @@ struct hisi_audio_hw_device {
      */
     int (*get_master_mute)(struct hisi_audio_hw_device* dev, bool* mute);
 
+#if EMUI_VERSION == 9
+    /**
+     * Called by the framework to read available microphones characteristics.
+     *
+     * \param[in] dev the hw_device object.
+     * \param[out] mic_array Pointer to first element on array with microphone info
+     * \param[out] mic_count When called, this holds the value of the max number of elements
+     *                       allowed in the mic_array. The actual number of elements written
+     *                       is returned here.
+     *                       if mic_count is passed as zero, mic_array will not be populated,
+     *                       and mic_count will return the actual number of microphones in the
+     *                       system.
+     *
+     * \return 0 if the microphone array is successfully filled.
+     *         -ENOSYS if there is an error filling the data
+     */
+    int (*get_microphones)(const struct hisi_audio_hw_device* dev,
+                           struct audio_microphone_characteristic_t* mic_array, size_t* mic_count);
+#endif
+
     /**
      * Routing control
      */
