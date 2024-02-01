@@ -160,6 +160,7 @@ static int adev_close(hw_device_t* device) {
     return 0;
 }
 
+#if EMUI_VERSION == 9
 static int adev_get_microphones(const struct audio_hw_device* dev,
                                 struct audio_microphone_characteristic_t* mic_array,
                                 size_t* mic_count) {
@@ -174,6 +175,7 @@ static int adev_get_microphones(const struct audio_hw_device* dev,
 
     return -ENOSYS;
 }
+#endif
 
 static int adev_get_audio_port(struct audio_hw_device* dev, struct audio_port* port) {
     hisi_wrapper_audio_device* ctx = reinterpret_cast<hisi_wrapper_audio_device*>(dev);
@@ -425,7 +427,9 @@ static int adev_open(const hw_module_t* module, const char* name, hw_device_t** 
     adev->device.open_input_stream = adev_open_input_stream;
     adev->device.close_input_stream = adev_close_input_stream;
     adev->device.dump = adev_dump;
+#if EMUI_VERSION == 9
     adev->device.get_microphones = adev_get_microphones;
+#endif
     adev->device.create_audio_patch = adev_create_audio_patch;
     adev->device.release_audio_patch = adev_release_audio_patch;
     adev->device.get_audio_port = adev_get_audio_port;
