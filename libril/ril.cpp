@@ -101,12 +101,13 @@ static size_t fixSignalStrength(const void* response) {
 }
 
 // This is required by libreference-ril
-extern "C" char *requestToString(int request) {
-    auto orig_RIL_requestToString = reinterpret_cast<char *(*)(int)>(dlsym(RTLD_NEXT, __func__));
+extern "C" char* requestToString(int request) {
+    auto orig_RIL_requestToString = reinterpret_cast<char* (*)(int)>(dlsym(RTLD_NEXT, __func__));
     return orig_RIL_requestToString(request);
 }
 
-extern "C" void RIL_onRequestComplete(RIL_Token t, RIL_Errno e, void* response, size_t responselen) {
+extern "C" void RIL_onRequestComplete(RIL_Token t, RIL_Errno e, void* response,
+                                      size_t responselen) {
     auto orig_RIL_onRequestComplete =
             reinterpret_cast<void (*)(RIL_Token, RIL_Errno, void*, size_t)>(
                     dlsym(RTLD_NEXT, __func__));
@@ -131,11 +132,11 @@ do_not_handle:
     orig_RIL_onRequestComplete(t, e, response, responselen);
 }
 
-extern "C" void RIL_onUnsolicitedResponse(
-        int unsolResponse, const void* data, size_t datalen, RIL_SOCKET_ID modemid) {
+extern "C" void RIL_onUnsolicitedResponse(int unsolResponse, const void* data, size_t datalen,
+                                          RIL_SOCKET_ID modemid) {
     auto orig_RIL_onUnsolicitedResponse =
-            reinterpret_cast<void (*)(int, const void*, size_t, RIL_SOCKET_ID)>(dlsym(
-                    RTLD_NEXT, __func__));
+            reinterpret_cast<void (*)(int, const void*, size_t, RIL_SOCKET_ID)>(
+                    dlsym(RTLD_NEXT, __func__));
 
     if (!data) {
         ALOGV("%s: data is NULL", __func__);
