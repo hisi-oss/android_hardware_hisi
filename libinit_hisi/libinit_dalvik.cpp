@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#define LOG_TAG "hisi_dalvik"
+#define LOG_TAG "libinit_dalvik"
 
-#include "include/hisi_dalvik.h"
-#include "include/hisi_utils.h"
+#include <libinit_dalvik.h>
+#include <libinit_utils.h>
 
 #include <android-base/logging.h>
 
@@ -49,7 +49,7 @@ static const dalvik_heap_info_t dalvik_heap_info_2048 = {
         .heaptargetutilization = "0.75",
 };
 
-void load_hisi_dalvik() {
+void load_dalvik() {
     struct sysinfo sys;
     const dalvik_heap_info_t* dhi;
 
@@ -66,10 +66,10 @@ void load_hisi_dalvik() {
         dhi = &dalvik_heap_info_2048;
     }
 
-    set_property(HEAPSTARTSIZE_PROP, dhi->heapstartsize);
-    set_property(HEAPGROWTHLIMIT_PROP, dhi->heapgrowthlimit);
-    set_property(HEAPSIZE_PROP, dhi->heapsize);
-    set_property(HEAPTARGETUTILIZATION_PROP, dhi->heaptargetutilization);
-    set_property(HEAPMINFREE_PROP, dhi->heapminfree);
-    set_property(HEAPMAXFREE_PROP, dhi->heapmaxfree);
+    property_override(HEAPSTARTSIZE_PROP, dhi->heapstartsize);
+    property_override(HEAPGROWTHLIMIT_PROP, dhi->heapgrowthlimit);
+    property_override(HEAPSIZE_PROP, dhi->heapsize);
+    property_override(HEAPTARGETUTILIZATION_PROP, dhi->heaptargetutilization);
+    property_override(HEAPMINFREE_PROP, dhi->heapminfree);
+    property_override(HEAPMAXFREE_PROP, dhi->heapmaxfree);
 }

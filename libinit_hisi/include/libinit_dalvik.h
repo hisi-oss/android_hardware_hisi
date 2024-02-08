@@ -17,4 +17,4 @@ typedef struct dalvik_heap_info {
     std::string heaptargetutilization;
 } dalvik_heap_info_t;
 
-void load_hisi_dalvik();
+void load_dalvik();
