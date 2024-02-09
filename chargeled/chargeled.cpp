@@ -32,7 +32,7 @@
 
 #define POWER_SUPPLY_SUBSYSTEM "SUBSYSTEM=power_supply"
 
-#define BATTERY_STATUS_FILE "/sys/class/power_supply/battery/status"
+#define BATTERY_STATUS_FILE "/sys/class/power_supply/Battery/status"
 #define AMBER_LED "/sys/class/leds/amber/brightness"
 #define GREEN_LED "/sys/class/leds/green/brightness"
 
