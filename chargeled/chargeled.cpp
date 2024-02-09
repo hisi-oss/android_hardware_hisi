@@ -33,11 +33,13 @@
 #define POWER_SUPPLY_SUBSYSTEM "SUBSYSTEM=power_supply"
 
 #define BATTERY_STATUS_FILE "/sys/class/power_supply/Battery/status"
-#define AMBER_LED "/sys/class/leds/amber/brightness"
+#define RED_LED "/sys/class/leds/red/brightness"
 #define GREEN_LED "/sys/class/leds/green/brightness"
+#define BLUE_LED "/sys/class/leds/blue/brightness"
 
-#define LED_OFF "0"
-#define LED_ON "1"
+#define LED_MAX "255"
+#define LED_MID "150"
+#define LED_MIN "0"
 
 #define STR_BUF_SIZE 128
 #define UEVENT_BUF_SIZE 64*1024
@@ -108,20 +110,17 @@ static int get_charging_status() {
 }
 
 static void update_led(int charge_status) {
-    FILE *aled, *gled;
-    aled = fopen(AMBER_LED, "w");
-    if (!aled) {
-        KLOG_ERROR(LOG_TAG, "%s: could not open amber LED: %s\n",
-            __func__, AMBER_LED);
+    FILE *rled, *gled, *bled;
+    rled = fopen(RED_LED, "w");
+    gled = fopen(GREEN_LED, "w");
+    bled = fopen(BLUE_LED, "w");
+
+    if (!rled || !gled || !bled) {
+        if (rled) fclose(rled);
+        if (gled) fclose(gled);
+        if (bled) fclose(bled);
+        KLOG_ERROR(LOG_TAG, "%s: could not open one or more LED files\n", __func__);
         return;
-    } else {
-        gled = fopen(GREEN_LED, "w");
-        if (!gled) {
-            fclose(aled);
-            KLOG_ERROR(LOG_TAG, "%s: could not open green LED: %s\n",
-                __func__, GREEN_LED);
-            return;
-        }
     }
 
     KLOG_INFO(LOG_TAG, "%s: setting charging status '%d'\n",
@@ -129,21 +128,25 @@ static void update_led(int charge_status) {
 
     switch (charge_status) {
         case BATTERY_STATUS_CHARGING:
-            fputs(LED_ON, aled);
-            fputs(LED_OFF, gled);
+            fputs(LED_MAX, rled);
+            fputs(LED_MID, gled);
+            fputs(LED_MIN, bled);
             break;
         case BATTERY_STATUS_FULL:
-            fputs(LED_OFF, aled);
-            fputs(LED_ON, gled);
+            fputs(LED_MAX, gled);
+            fputs(LED_MIN, rled);
+            fputs(LED_MIN, bled);
             break;
         default:
-            fputs(LED_OFF, aled);
-            fputs(LED_OFF, gled);
+            fputs(LED_MIN, gled);
+            fputs(LED_MIN, rled);
+            fputs(LED_MIN, bled);
             break;
     }
 
-    fclose(aled);
+    fclose(rled);
     fclose(gled);
+    fclose(bled);
 }
 
 static void chargeled_update() {
