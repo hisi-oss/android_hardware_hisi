@@ -15,16 +15,17 @@
 //
 cc_binary {
     name: "chargeled",
-    recovery: true,
+    init_rc: ["chargeled.rc"],
+    recovery_available: true,
     srcs: ["chargeled.cpp"],
     cflags: ["-Wall"],
     header_libs: ["libbatteryservice_headers"],
-    static_executable: true,
-    static_libs: [
+    shared_libs: [
         "libbase",
         "libc",
         "liblog",
         "libcutils",
     ],
+    vendor: true,
     pack_relocations: false,
 }

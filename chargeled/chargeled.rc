@@ -1,0 +1,9 @@
+on charger
+    start vendor.chargeled
+
+service vendor.chargeled /vendor/bin/chargeled
+    class main
+    user root
+    group system
+    oneshot
+    disabled
