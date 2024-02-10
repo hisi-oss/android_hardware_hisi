@@ -33,6 +33,7 @@
 #define POWER_SUPPLY_SUBSYSTEM "SUBSYSTEM=power_supply"
 
 #define BATTERY_STATUS_FILE "/sys/class/power_supply/Battery/status"
+#define BATTERY_CAPACITY_FILE "/sys/class/power_supply/Battery/capacity"
 #define RED_LED "/sys/class/leds/red/brightness"
 #define GREEN_LED "/sys/class/leds/green/brightness"
 #define BLUE_LED "/sys/class/leds/blue/brightness"
@@ -109,7 +110,35 @@ static int get_charging_status() {
     return ret;
 }
 
-static void update_led(int charge_status) {
+static int get_battery_level() {
+    char batt_cap_str[STR_BUF_SIZE];
+    int batt_level = -1;
+
+    FILE *bcap;
+    bcap = fopen(BATTERY_CAPACITY_FILE, "r");
+    if (bcap) {
+        if (fgets(batt_cap_str, STR_BUF_SIZE, bcap) != NULL) {
+            batt_level = atoi(batt_cap_str);
+            if (batt_level < 0 || batt_level > 100) {
+                KLOG_ERROR(LOG_TAG, "%s: invalid battery level %d in %s\n",
+                    __func__, batt_level, BATTERY_CAPACITY_FILE);
+                batt_level = -1;
+            }
+        } else {
+            KLOG_ERROR(LOG_TAG, "%s: failed to read %s; errno=%s\n",
+                __func__, BATTERY_CAPACITY_FILE, strerror(errno));
+        }
+
+        fclose(bcap);
+    } else {
+        KLOG_ERROR(LOG_TAG, "%s: could not open %s; errno=%s\n",
+            __func__, BATTERY_CAPACITY_FILE, strerror(errno));
+    }
+
+    return batt_level;
+}
+
+static void update_led(int charge_status, int battery_level) {
     FILE *rled, *gled, *bled;
     rled = fopen(RED_LED, "w");
     gled = fopen(GREEN_LED, "w");
@@ -128,18 +157,32 @@ static void update_led(int charge_status) {
 
     switch (charge_status) {
         case BATTERY_STATUS_CHARGING:
-            fputs(LED_MAX, rled);
-            fputs(LED_MID, gled);
-            fputs(LED_MIN, bled);
+            if (battery_level >= 0 && battery_level < 20) {
+                fputs(LED_MAX, rled);
+                fputs(LED_MIN, gled);
+                fputs(LED_MIN, bled);
+            } else if (battery_level >= 20 && battery_level < 80) {
+                fputs(LED_MAX, rled);
+                fputs(LED_MID, gled);
+                fputs(LED_MIN, bled);
+            } else if (battery_level >= 80 && battery_level < 100) {
+                fputs(LED_MID, rled);
+                fputs(LED_MAX, gled);
+                fputs(LED_MIN, bled);
+            } else {
+                fputs(LED_MID, rled);
+                fputs(LED_MIN, gled);
+                fputs(LED_MAX, bled);
+            }
             break;
         case BATTERY_STATUS_FULL:
-            fputs(LED_MAX, gled);
             fputs(LED_MIN, rled);
+            fputs(LED_MAX, gled);
             fputs(LED_MIN, bled);
             break;
         default:
-            fputs(LED_MIN, gled);
             fputs(LED_MIN, rled);
+            fputs(LED_MIN, gled);
             fputs(LED_MIN, bled);
             break;
     }
@@ -152,13 +195,15 @@ static void update_led(int charge_status) {
 static void chargeled_update() {
     static int last_charge_status = BATTERY_STATUS_UNKNOWN;
     int charge_status;
+    int battery_level;
 
     charge_status = get_charging_status();
     if (charge_status <= 0 || charge_status == last_charge_status)
         return;
+    battery_level = get_battery_level();
 
     last_charge_status = charge_status;
-    update_led(charge_status);
+    update_led(charge_status, battery_level);
 }
 
 static int uevent_init() {
