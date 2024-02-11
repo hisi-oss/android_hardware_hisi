@@ -34,3 +34,6 @@ int __chr_printLog(logPriority prio, logTag tag, const char* fmt, ...) {
     ALOGV("%s: prio: %d, tag: %u, fmt: %s", __func__, prio, tag, fmt);
     return 0;
 }
+
+int __chr_print_log(logPriority prio, logTag tag, const char* fmt, ...)
+        __attribute__((alias("__chr_printLog")));
