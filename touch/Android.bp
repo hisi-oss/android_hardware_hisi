@@ -10,7 +10,6 @@ cc_binary {
     relative_install_path: "hw",
     vendor: true,
     init_rc: ["vendor.lineage.touch@1.0-service.hisi.rc"],
-    vintf_fragments: ["vendor.lineage.touch@1.0-service.hisi.xml"],
     srcs: [
         "GloveMode.cpp",
         "TouchscreenGesture.cpp",
