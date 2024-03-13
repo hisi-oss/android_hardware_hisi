@@ -32,3 +32,24 @@ cc_library_shared {
         "libtinyxml2_shim"
     ],
 }
+
+cc_library_shared {
+    name: "guivnd",
+    shared_libs: [
+        "libgui_vendor",
+        "libsensor_vendor"
+    ],
+    vendor: true,
+}
+
+cc_library_shared {
+    name: "libshim_hwcam",
+    shared_libs: [
+        "libgui_vendor",
+        "libui",
+        "libshim_ui",
+        "libui_shim",
+        "libtinyxml2_shim"
+    ],
+    vendor: true,
+}
