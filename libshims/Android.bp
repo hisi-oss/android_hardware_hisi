@@ -24,3 +24,11 @@ cc_library_shared {
     ],
     vendor: true,
 }
+
+cc_library_shared {
+    name: "libshim_emcom",
+    shared_libs: [
+        "libcutils_shim",
+        "libtinyxml2_shim"
+    ],
+}
